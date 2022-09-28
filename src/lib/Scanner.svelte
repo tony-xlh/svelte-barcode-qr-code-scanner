@@ -1,5 +1,5 @@
 <script>
-  import { onMount,createEventDispatcher } from 'svelte';
+  import { onMount,onDestroy,createEventDispatcher } from 'svelte';
   import { CameraEnhancer } from 'dynamsoft-camera-enhancer';
   import { BarcodeReader } from "dynamsoft-javascript-barcode";
 
@@ -19,11 +19,19 @@
     init();
 	});
 
+  onDestroy(()=>{
+    stopDecoding();
+    enhancer?.dispose(true);
+    reader?.destroyContext();
+    enhancer = null;
+    reader = null;
+  });
+
   async function init(){
     if (!enhancer) {
+      BarcodeReader.license = "DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==";
       enhancer = await CameraEnhancer.createInstance();
       reader = await BarcodeReader.createInstance();
-      console.log(cameraContainer);
       await enhancer.setUIElement(cameraContainer);
     }
     dispatch('initialization', true);
