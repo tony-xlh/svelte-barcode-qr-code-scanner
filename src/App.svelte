@@ -2,6 +2,7 @@
   import Scanner from './lib/Scanner.svelte'
   let isActive = false;
   let initialized = false;
+  let barcodeResults = [];
   function startScanning(){
     isActive = true;
   }
@@ -10,6 +11,7 @@
     console.log(results);
     if (results.length>0) {
       isActive = false;
+      barcodeResults = results;
     }
   }
   function handleInitialization(event){
@@ -29,6 +31,13 @@
     
     <div>
       <Scanner isActive={isActive} on:barcodeResults={handleBarcodeResults} on:initialization={handleInitialization}></Scanner>
+      {#if barcodeResults.length>0}
+        <ul>
+          {#each barcodeResults as result}
+            <li>{result.barcodeFormatString} : {result.barcodeText}</li>
+          {/each}
+        </ul>
+      {/if}
     </div>
   </div>
 </main>
